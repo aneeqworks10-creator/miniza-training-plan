@@ -1,0 +1,423 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Oswald:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .gp {
+    background: #0d0d0d;
+    font-family: 'Oswald', sans-serif;
+    color: #ffffff;
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .gp-tag {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: #555;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+
+  .gp-tag::before { content: ''; display: block; height: 1px; width: 20px; background: #c8f000; }
+  .gp-tag::after { content: ''; flex: 1; height: 1px; background: #222; }
+
+  .gp-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(36px, 10vw, 62px);
+    letter-spacing: -0.01em;
+    line-height: 0.95;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+  }
+
+  .gp-title span { color: #c8f000; }
+
+  .gp-subtitle {
+    font-size: clamp(10px, 2.5vw, 13px);
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: #444;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 2px;
+    margin-bottom: 1.75rem;
+  }
+
+  .stat-box {
+    background: #161616;
+    padding: 0.75rem 0.75rem;
+    border-left: 2px solid #1e1e1e;
+  }
+
+  .stat-box:first-child { border-left: 2px solid #c8f000; }
+
+  .stat-lbl {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  .stat-val {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(18px, 5vw, 26px);
+    color: #c8f000;
+    line-height: 1;
+  }
+
+  .stat-val span {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: #555;
+    margin-left: 1px;
+  }
+
+  .days-list { margin-bottom: 2rem; }
+
+  .day-item { border-bottom: 1px solid #1a1a1a; overflow: hidden; }
+  .day-item:first-child { border-top: 1px solid #1a1a1a; }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, padding-left 0.15s;
+    position: relative;
+  }
+
+  .day-header::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: #c8f000;
+    transition: width 0.2s;
+  }
+
+  .day-item.open .day-header::before { width: 3px; }
+  .day-item.open .day-header { background: #141414; padding-left: 10px; }
+
+  .day-num {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(28px, 8vw, 40px);
+    color: #222;
+    line-height: 1;
+    min-width: 48px;
+    text-align: right;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .day-item.open .day-num { color: #c8f000; }
+
+  .day-info { flex: 1; min-width: 0; }
+
+  .day-weekday {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 1px;
+  }
+
+  .day-name {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(14px, 4vw, 20px);
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .day-meta {
+    font-size: 10px;
+    font-weight: 300;
+    color: #444;
+    letter-spacing: 0.1em;
+    margin-top: 1px;
+  }
+
+  .day-toggle {
+    font-family: 'Russo One', sans-serif;
+    font-size: 18px;
+    color: #333;
+    min-width: 28px;
+    text-align: center;
+    transition: transform 0.2s, color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .day-item.open .day-toggle { transform: rotate(45deg); color: #c8f000; }
+
+  .day-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .day-item.open .day-body { max-height: 900px; }
+
+  .ex-table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; }
+
+  .ex-table thead tr { background: #131313; }
+
+  .ex-table th {
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #444;
+  }
+
+  .ex-table td { padding: 8px 10px; border-bottom: 1px solid #181818; vertical-align: top; }
+  .ex-table tr:last-child td { border-bottom: none; }
+
+  .ex-name {
+    font-size: clamp(12px, 3.2vw, 15px);
+    font-weight: 500;
+    color: #ddd;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .ex-note {
+    font-size: clamp(10px, 2.5vw, 11px);
+    font-weight: 300;
+    color: #444;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+
+  .ex-num {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(13px, 3.5vw, 16px);
+    color: #c8f000;
+    white-space: nowrap;
+  }
+
+  .section-heading {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #444;
+    margin: 2rem 0 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-heading::before { content: ''; width: 16px; height: 1px; background: #c8f000; }
+  .section-heading::after { content: ''; flex: 1; height: 1px; background: #1e1e1e; }
+
+  .cal-table { width: 100%; border-collapse: collapse; border: 1px solid #1a1a1a; margin-bottom: 1.75rem; }
+
+  .cal-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #181818;
+    font-size: clamp(12px, 3.2vw, 14px);
+    font-weight: 400;
+    color: #888;
+    letter-spacing: 0.04em;
+  }
+
+  .cal-table tr:last-child td { border-bottom: none; }
+
+  .cal-table .cal-label {
+    font-size: clamp(10px, 2.8vw, 12px);
+    font-weight: 300;
+    color: #444;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cal-table tr.cal-total td {
+    background: #141414;
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(16px, 4.5vw, 20px);
+    color: #c8f000;
+    letter-spacing: 0.04em;
+    border-left: 3px solid #c8f000;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 2px;
+    margin-bottom: 1.75rem;
+  }
+
+  .rule-box {
+    background: #131313;
+    padding: 0.875rem 0.875rem;
+    border-top: 2px solid #1a1a1a;
+    transition: border-color 0.15s;
+  }
+
+  .rule-icon-wrap { font-size: 18px; color: #c8f000; margin-bottom: 8px; }
+
+  .rule-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: clamp(12px, 3.5vw, 15px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+
+  .rule-desc {
+    font-size: clamp(10px, 2.8vw, 12px);
+    font-weight: 300;
+    color: #555;
+    line-height: 1.55;
+    letter-spacing: 0.03em;
+  }
+
+  .footer {
+    font-size: 9px;
+    font-weight: 300;
+    color: #2a2a2a;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding-top: 1.25rem;
+    border-top: 1px solid #1a1a1a;
+    text-align: center;
+  }
+</style>
+
+<div class="gp">
+  <div class="gp-tag">Training program</div>
+  <div class="gp-title">5 Day <span>Gym</span> Plan</div>
+  <div class="gp-subtitle">Personalised · Strength + Toning · Weight Gain</div>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-lbl">Current</div><div class="stat-val">50<span>kg</span></div></div>
+    <div class="stat-box"><div class="stat-lbl">Goal</div><div class="stat-val">60<span>kg</span></div></div>
+    <div class="stat-box"><div class="stat-lbl">BMI</div><div class="stat-val">16.3</div></div>
+    <div class="stat-box"><div class="stat-lbl">Calories</div><div class="stat-val">2,500<span>kcal</span></div></div>
+    <div class="stat-box"><div class="stat-lbl">Protein</div><div class="stat-val">100<span>g+</span></div></div>
+  </div>
+
+  <div class="days-list" id="daysList"></div>
+
+  <div class="section-heading">Calorie breakdown</div>
+  <table class="cal-table">
+    <tr><td class="cal-label">Basal metabolic rate</td><td style="text-align:right">1,302 kcal</td></tr>
+    <tr><td class="cal-label">TDEE with activity (×1.55)</td><td style="text-align:right">2,018 kcal</td></tr>
+    <tr><td class="cal-label">Weight gain surplus</td><td style="text-align:right">+500 kcal</td></tr>
+    <tr class="cal-total"><td>Daily target</td><td style="text-align:right">2,500 kcal</td></tr>
+  </table>
+
+  <div class="section-heading">Rules</div>
+  <div class="rules-grid">
+    <div class="rule-box">
+      <div class="rule-icon-wrap"><i class="ti ti-ban" aria-hidden="true"></i></div>
+      <div class="rule-title">Never train fasted</div>
+      <div class="rule-desc">No reserves to pull from. Eat before every session.</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-icon-wrap"><i class="ti ti-barbell" aria-hidden="true"></i></div>
+      <div class="rule-title">Start light</div>
+      <div class="rule-desc">Form first, always. Progress weight gradually.</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-icon-wrap"><i class="ti ti-meat" aria-hidden="true"></i></div>
+      <div class="rule-title">100g+ protein</div>
+      <div class="rule-desc">Every day. Without it, this plan builds nothing.</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-icon-wrap"><i class="ti ti-moon" aria-hidden="true"></i></div>
+      <div class="rule-title">Sleep 7–8 hrs</div>
+      <div class="rule-desc">Muscle is built during recovery, not the workout.</div>
+    </div>
+  </div>
+
+  <div class="footer">Female · 26 · 5'9" · 50 kg → 60 kg</div>
+</div>
+
+<script>
+const days = [
+  { num:"01", day:"Monday", name:"Upper Body Strength", duration:"45 min", exercises:[
+    {name:"Lat pulldown",note:"Light-moderate weight, full stretch",sets:3,reps:"12"},
+    {name:"Seated cable row",note:"Keep back straight",sets:3,reps:"12"},
+    {name:"Dumbbell shoulder press",note:"Seated, controlled",sets:3,reps:"12"},
+    {name:"Dumbbell chest press",note:"Flat bench, light weight",sets:3,reps:"12"},
+    {name:"Dumbbell bicep curl",note:"Slow and controlled",sets:3,reps:"12"},
+    {name:"Tricep pushdown (cable)",note:"Don't flare elbows",sets:3,reps:"12"}
+  ]},
+  { num:"02", day:"Tuesday", name:"Lower Body Strength", duration:"45 min", exercises:[
+    {name:"Leg press",note:"Safer on joints, great squat alternative",sets:3,reps:"15"},
+    {name:"Romanian deadlift",note:"Light weight, focus on hamstring stretch",sets:3,reps:"12"},
+    {name:"Leg extension",note:"Controlled — don't snap at the top",sets:3,reps:"15"},
+    {name:"Leg curl",note:"Full range of motion",sets:3,reps:"15"},
+    {name:"Calf raises",note:"Slow and deliberate",sets:3,reps:"20"}
+  ]},
+  { num:"03", day:"Wednesday", name:"Active Recovery", duration:"30 min", exercises:[
+    {name:"Incline treadmill walk",note:"Not a run. Blood flow only — eat a snack before",sets:1,reps:"20–25 min"},
+    {name:"Full body stretching",note:"Hold each stretch 30–45 sec",sets:1,reps:"5–10 min"}
+  ]},
+  { num:"04", day:"Thursday", name:"Full Body Circuit", duration:"50 min", exercises:[
+    {name:"Goblet squat",note:"Beginner-friendly squat",sets:3,reps:"12"},
+    {name:"Dumbbell row",note:"One arm on bench",sets:3,reps:"12 each"},
+    {name:"Incline dumbbell press",note:"Upper chest focus",sets:3,reps:"12"},
+    {name:"Hip thrust",note:"Bodyweight or light barbell",sets:3,reps:"15"},
+    {name:"Face pulls (cable)",note:"Great for posture and shoulders",sets:3,reps:"15"}
+  ]},
+  { num:"05", day:"Friday", name:"Core + Mobility", duration:"35 min", exercises:[
+    {name:"Dead bug",note:"Slow and controlled",sets:3,reps:"10 each side"},
+    {name:"Plank",note:"Don't hold your breath",sets:3,reps:"30–45 sec"},
+    {name:"Glute bridge",note:"Squeeze at the top",sets:3,reps:"15"},
+    {name:"Bird dog",note:"Opposite arm and leg",sets:3,reps:"10 each side"},
+    {name:"Cat-cow stretch",note:"Spinal mobility",sets:1,reps:"2 min"},
+    {name:"Hip flexor stretch",note:"Hold each side",sets:1,reps:"1 min each"},
+    {name:"Foam rolling",note:"Full body",sets:1,reps:"5–10 min"}
+  ]}
+];
+
+const list = document.getElementById('daysList');
+days.forEach((d) => {
+  const item = document.createElement('div');
+  item.className = 'day-item';
+  const rows = d.exercises.map(e => `
+    <tr>
+      <td><div class="ex-name">${e.name}</div><div class="ex-note">${e.note}</div></td>
+      <td class="ex-num">${e.sets}</td>
+      <td class="ex-num">${e.reps}</td>
+    </tr>`).join('');
+  item.innerHTML = `
+    <div class="day-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="day-num">${d.num}</div>
+      <div class="day-info">
+        <div class="day-weekday">${d.day}</div>
+        <div class="day-name">${d.name}</div>
+        <div class="day-meta">${d.duration}</div>
+      </div>
+      <div class="day-toggle">+</div>
+    </div>
+    <div class="day-body">
+      <table class="ex-table">
+        <thead><tr><th style="width:55%">Exercise</th><th>Sets</th><th>Reps</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  list.appendChild(item);
+});
+document.querySelector('.day-item').classList.add('open');
+</script>
